@@ -43,8 +43,8 @@ class InstagramSider extends React.Component<Props> {
             rel="noreferrer noopener"
           >
             <Row gutter={4}>
-              {images.map((image, i) => (
-                <Col key={`instagram-image-${i}`} span={8} style={{ marginBottom: 4 }}>
+              {images.map(image => (
+                <Col key={image} span={8} style={{ marginBottom: 4 }}>
                   <img src={image} alt="instagram collection" />
                 </Col>
               ))}

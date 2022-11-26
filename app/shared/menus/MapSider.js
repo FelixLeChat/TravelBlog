@@ -9,7 +9,7 @@ const i18nCommonPrefix = 'common';
 type Props = {
   t: TFunction,
   destination: string,
-  description?: string,
+  description: string
 };
 
 @withNamespaces([i18nCommonPrefix])

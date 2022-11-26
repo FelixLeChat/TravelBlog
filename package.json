@@ -65,8 +65,7 @@
     "redux-actions": "^2.6.1",
     "redux-promise": "^0.6.0",
     "redux-saga": "^0.16.0",
-    "reselect": "^4.0.0",
-    "sequelize": "^4.41.1"
+    "reselect": "^4.0.0"
   },
   "devDependencies": {
     "@babel/core": "^7.0.0",

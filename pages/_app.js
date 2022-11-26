@@ -49,9 +49,6 @@ class _App extends App {
     Router.events.on('routeChangeComplete', () => {
       // Scroll to top
       window.scrollTo(0, 0);
-
-      // Refresh ads
-      if (window.googletag) window.googletag.pubads().refresh();
     });
     // Intercept back and next browser button event to force a SSR.
     Router.beforePopState(({ as }) => {

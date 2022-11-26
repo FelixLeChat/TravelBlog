@@ -59,6 +59,7 @@ class AboutIndex extends React.Component<Props> {
                   <Col span={16} className="ant-text-center">
                     <div
                       className="ant-margin-top"
+                      // eslint-disable-next-line react/no-danger
                       dangerouslySetInnerHTML={{ __html: t(`${i18nPrefix}:about`) }}
                     />
                   </Col>

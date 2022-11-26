@@ -11,9 +11,7 @@ import { Link } from '../../config/routes';
 import Container from '../components/Container';
 import ArticleCard from '../shared/articles/ArticleCard';
 import MapSider from '../shared/menus/MapSider';
-import SideDestinationPageAd from '../ads/sideDestinationPageAd';
 import { compareValues } from '../utils/utils';
-import AdsSider from '../ads/AdsSider';
 import ImageMosaic from '../shared/gallery/imageMosaic';
 import RegularStyleImage from '../shared/gallery/regularStyleImage';
 
@@ -119,7 +117,6 @@ class Destination extends React.PureComponent<Props> {
             </Col>
             <Col span={0} lg={8}>
               <MapSider destination={destination} description={description} />
-              <AdsSider ads={<SideDestinationPageAd />} className="ant-margin-top" />
             </Col>
             {this.formattedImages
               && this.formattedImages.length > 4 && (

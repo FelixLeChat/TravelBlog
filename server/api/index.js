@@ -1,6 +1,6 @@
 const express = require('express');
 const cache = require('memory-cache');
-const models = require('../models');
+const models = require('../data');
 const utils = require('../utils/utils');
 
 const minute = 60 * 1000;
@@ -20,60 +20,26 @@ router.get('/destination/:destination', (req, res) => {
     console.log(`Cache hit with : ${cacheKey}`);
     res.json(result);
   } else {
-    models.Destination.findAll({
-      limit: 1,
-      where: {
-        name: destinationName,
-      },
-      attributes: ['id', 'name', 'image', 'description'],
-    }).then((destinations) => {
-      if (destinations && destinations.length === 1) {
-        const destination = destinations[0];
+    const currentDestination = models.Destinations.find(x => x.name === destinationName);
+    if (currentDestination != null) {
+      const articles = models.Articles.filter(x => x.destination_id === currentDestination.id);
+      const gallery = models.GalleryImages.filter(x => x.destination_id === currentDestination.id);
+      result = {
+        id: currentDestination.id,
+        destination: currentDestination.name,
+        description: currentDestination.description,
+        hero: currentDestination.image,
+        articles,
+        images: gallery,
+      };
 
-        // Find articles for the destination
-        models.Article.findAll({
-          limit: 10,
-          where: {
-            destination_id: destination.id,
-          },
-          attributes: [
-            'id',
-            'image',
-            'thumbnail',
-            'title',
-            'content',
-            'theme_id',
-            'destination_id',
-            'published_at',
-            'slug',
-          ],
-        }).then((articles) => {
-          models.Gallery.findAll({
-            where: {
-              destination_id: destination.id,
-            },
-            attributes: ['id', 'src', 'thumbnail'],
-          }).then((images) => {
-            result = {
-              id: destination.id,
-              destination: destination.name,
-              description: destination.description,
-              hero: destination.image,
-              articles,
-              images,
-            };
+      // set cache
+      cache.put(cacheKey, result, 7 * day);
 
-            // set cache
-            cache.put(cacheKey, result, 7 * day);
-
-            // send result
-            res.json(result);
-          });
-        });
-      } else {
-        res.status(404).send('Not found');
-      }
-    });
+      // send result
+      res.json(result);
+    }
+    res.status(404).send('Not found');
   }
 });
 
@@ -88,92 +54,42 @@ router.get('/article/:article', (req, res) => {
     console.log(`Cache hit with : ${cacheKey}`);
     res.json(result);
   } else {
-    models.Article.findAll({
-      limit: 1,
-      where: {
-        slug: articleSlug,
-      },
-      attributes: [
-        'id',
-        'image',
-        'thumbnail',
-        'title',
-        'description',
-        'content',
-        'bottom_content',
-        'theme_id',
-        'destination_id',
-        'published_at',
-        'slug',
-        'top_titles',
-        'top_contents',
-        'top_images',
-        'top_list_title',
-        'top_list_items',
-        'top_list_images',
-      ],
-    }).then((articles) => {
-      if (articles && articles.length === 1) {
-        const article = articles[0];
+    const currentArticle = models.Articles.find(x => x.slug === articleSlug);
+    if (currentArticle != null) {
+      const relatedArticles = models.Articles.filter(x => x.destination_id === currentArticle.destination_id && x.id !== currentArticle.id);
 
-        // Find related articles
-        models.Article.findAll({
-          limit: 4,
-          where: {
-            id: { $not: article.id },
-            destination_id: article.destination_id,
-          },
-          attributes: ['thumbnail', 'title', 'theme_id', 'destination_id', 'published_at', 'slug'],
-        }).then((relatedArticles) => {
-          if (relatedArticles.length < 4) {
-            // Find article in similar category
-            models.Article.findAll({
-              limit: 4 - relatedArticles.length,
-              where: {
-                theme_id: article.theme_id,
-              },
-              attributes: [
-                'thumbnail',
-                'title',
-                'theme_id',
-                'destination_id',
-                'published_at',
-                'slug',
-              ],
-            }).then((similarThemeArticles) => {
-              result = {
-                article,
-                relatedArticles: relatedArticles.concat(similarThemeArticles),
-              };
+      if (relatedArticles.length > 4) {
+        const similarThemeArticles = models.Articles.filter(x => x.theme_id === currentArticle.theme_id && x.id !== currentArticle.id).slice(0, 4 - relatedArticles.length);
+        result = {
+          article: currentArticle,
+          relatedArticles: relatedArticles.concat(similarThemeArticles),
+        };
 
-              // set cache
-              cache.put(cacheKey, result, 7 * day);
+        // set cache
+        cache.put(cacheKey, result, 7 * day);
 
-              // send result
-              res.json(result);
-            });
-          } else {
-            result = {
-              article,
-              relatedArticles,
-            };
-
-            // set cache
-            cache.put(cacheKey, result, 7 * day);
-
-            // send result
-            res.json(result);
-          }
-        });
+        // send result
+        res.json(result);
       } else {
-        res.status(404).send('Not found');
+        result = {
+          article: currentArticle,
+          relatedArticles,
+        };
+
+        // set cache
+        cache.put(cacheKey, result, 7 * day);
+
+        // send result
+        res.json(result);
       }
-    });
+    } else {
+      res.status(404).send('Not found');
+    }
   }
 });
 
 // Get home details
-router.get('/home', (req, res) => {
+router.get('/home', (_req, res) => {
   const cacheKey = 'home_details';
 
   let result = cache.get(cacheKey);
@@ -182,19 +98,8 @@ router.get('/home', (req, res) => {
     console.log(`Cache hit with : ${cacheKey}`);
     res.json(result);
   } else {
-    models.Article.findAll({
-      attributes: [
-        'hero_article',
-        'image',
-        'thumbnail',
-        'title',
-        'content',
-        'theme_id',
-        'destination_id',
-        'published_at',
-        'slug',
-      ],
-    }).then((articles) => {
+    const articles = models.Articles;
+    if (articles.length > 0) {
       result = {
         articles,
       };
@@ -204,7 +109,9 @@ router.get('/home', (req, res) => {
 
       // send result
       res.json(result);
-    });
+    } else {
+      res.status(404).send('Not found');
+    }
   }
 });
 
@@ -218,9 +125,8 @@ router.get('/themes', (req, res) => {
     console.log(`Cache hit with : ${cacheKey}`);
     res.json(result);
   } else {
-    models.Theme.findAll({
-      attributes: ['id', 'name'],
-    }).then((themes) => {
+    const themes = models.Themes;
+    if (themes.length > 0) {
       result = {
         themes,
       };
@@ -230,12 +136,14 @@ router.get('/themes', (req, res) => {
 
       // send result
       res.json(result);
-    });
+    } else {
+      res.status(404).send('Not found');
+    }
   }
 });
 
 // Get Destinations
-router.get('/destinations', (req, res) => {
+router.get('/destinations', (_req, res) => {
   const cacheKey = 'destinations';
 
   let result = cache.get(cacheKey);
@@ -244,9 +152,8 @@ router.get('/destinations', (req, res) => {
     console.log(`Cache hit with : ${cacheKey}`);
     res.json(result);
   } else {
-    models.Destination.findAll({
-      attributes: ['id', 'name', 'continent', 'thumbnail'],
-    }).then((destinations) => {
+    const destinations = models.Destinations;
+    if (destinations.length > 0) {
       result = {
         destinations,
       };
@@ -256,7 +163,9 @@ router.get('/destinations', (req, res) => {
 
       // send result
       res.json(result);
-    });
+    } else {
+      res.status(404).send('Not found');
+    }
   }
 });
 
@@ -272,11 +181,10 @@ router.get('/gallery', (req, res) => {
     result.imageGallery = utils.getRandoms(result.imageGallery, 7);
     res.json(result);
   } else {
-    models.Gallery.findAll({
-      attributes: ['thumbnail', 'src', 'destination_id'],
-    }).then((photos) => {
+    const images = models.GalleryImages;
+    if (images.length > 0) {
       result = {
-        imageGallery: photos,
+        imageGallery: images,
       };
 
       // set cache
@@ -285,7 +193,9 @@ router.get('/gallery', (req, res) => {
       // send result
       result.imageGallery = utils.getRandoms(result.imageGallery, 7);
       res.json(result);
-    });
+    } else {
+      res.status(404).send('Not found');
+    }
   }
 });
 
