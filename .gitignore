@@ -16,3 +16,5 @@ config.json
 bundles/
 config/locales/en/*.missing.json
 config/locales/fr/*.missing.json
+
+.vercel

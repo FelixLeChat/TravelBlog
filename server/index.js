@@ -10,9 +10,8 @@ const Backend = require('i18next-node-fs-backend');
 const i18nextNamespaces = require('../app/utils/i18nextNamespaces');
 
 const dev = process.env.NODE_ENV !== 'production';
-if (dev) {
-  dotenv.config();
-}
+dotenv.config();
+
 // Call after config to have process.env set
 const api = require('./api');
 
