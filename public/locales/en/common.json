@@ -1,0 +1,42 @@
+{
+  "destinations": {
+    "title": "Destinations",
+    "iceland": "Iceland",
+    "portugal": "Portugal",
+    "greece": "Greece",
+    "croatia": "Croatia",
+    "holland": "Holland",
+    "denmark": "Denmark",
+    "italy": "Italy",
+    "philippines": "Philippines",
+    "vietnam": "Vietnam",
+    "argentina": "Argentina",
+    "switzerland": "Switzerland"
+  },
+  "continents": {
+    "europe": "Europe",
+    "asia": "Asia",
+    "south_america": "South America"
+  },
+  "themes": {
+    "itineary": "Itineary",
+    "guide": "Guide",
+    "top": "Top",
+    "food": "Food"
+  },
+  "themes_plural": {
+    "itineary": "Itinearies",
+    "guide": "Guides",
+    "top": "Tops",
+    "food": "Food"
+  },
+  "location": "Location",
+  "partner": "Partner",
+  "instagram": "Instagram",
+  "follow": "Follow us on",
+  "read_more": "Read more",
+  "brand": "Traveling Maude",
+  "related_articles": {
+    "title": "Recommended"
+  }
+}

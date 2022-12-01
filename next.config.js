@@ -1,49 +1,62 @@
-/* eslint-disable */
 const withPlugins = require('next-compose-plugins');
-const withLess = require('@zeit/next-less');
+const withOffline = require('next-offline');
+const optimizedImages = require('next-optimized-images');
+const withLess = require("next-with-less");
+const { i18n } = require('./next-i18next.config');
 
-// fix: prevents error when .less files are required by node
-if (typeof require !== 'undefined') {
-  require.extensions['.less'] = file => {};
-}
+const plugins = [
+  withOffline,
+  [
+    optimizedImages,
+    {
+      /* config for next-optimized-images */
+      optimizeImagesInDev: false,
+      optimizeImages: true,
+      handleImages: ['jpeg', 'png', 'svg', 'webp', 'ico', 'gif'],
+      mozjpeg: {
+        quality: 80,
+      },
+      optipng: {
+        optimizationLevel: 3,
+      },
+      webp: {
+        quality: 80,
+        alphaQuality: 80,
+        method: 5,
+      },
+      responsive: {
+        adapter: require('responsive-loader/sharp'),
+        sizes: [300, 600, 1200, 2000],
+        placeholder: true,
+        placeholderSize: 50,
+      },
+    },
+  ],
+  [withLess, {
+    lessLoaderOptions: {
+    }
+  }]
+];
 
-const nextConfig = {
-  serverRuntimeConfig: {
-    apiUrl: process.env.API_URL,
-  },
+// @ts-check
+
+/**
+ * @type {import('next').NextConfig}
+ **/
+const config = {
+  i18n,
   publicRuntimeConfig: {
-    host: process.env.HOST,
-    googleAnalyticsCode: process.env.GOOGLE_ANALYTICS_TRACKING_CODE,
+    domain: process.env.DOMAIN_NAME,
+    appName: process.env.APP_NAME,
+    // Tracking
+    googleAnalyticsTrackingCode: process.env.GOOGLE_ANALYTICS_TRACKING_CODE,
+    // Password protection
+    hasPasswordProtection: !!process.env.PASSWORD_PROTECTION,
   },
-  webpack: (config, options) => {
-    const originalEntry = config.entry;
-    config.entry = async () => {
-      const entries = await originalEntry();
-
-      if (
-        entries['main.js'] &&
-        !entries['main.js'].includes('./config/initializers/polyfills.js')
-      ) {
-        entries['main.js'].unshift('./config/initializers/polyfills.js');
-      }
-
-      return entries;
-    };
-
-    return config;
+  images: {
+    disableStaticImages: true,
   },
 };
 
-module.exports = withPlugins(
-  [
-    [
-      withLess,
-      {
-        lessLoaderOptions: {
-          javascriptEnabled: true,
-        },
-      },
-    ],
-  ],
-  nextConfig,
-);
+// eslint-disable-next-line import/no-commonjs
+module.exports = withPlugins(plugins, config);

@@ -1,4 +1,3 @@
-flow-typed/*
-__tests__/*
-jest.setup.js
-node_modules/*
+next.config.js
+.next/
+.vscode/
