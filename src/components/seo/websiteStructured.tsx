@@ -1,6 +1,6 @@
 // @flow
 import React from 'react';
-import JsonLd from './JsonLd';
+import JsonLd from './jsonLd';
 
 const WebsiteStructured = () => {
   const siteData = {

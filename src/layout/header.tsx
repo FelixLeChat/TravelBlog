@@ -1,8 +1,9 @@
 // @flow
 import React, { useState } from 'react';
 import {
-  Layout, Row, Col, Menu, Icon,
+  Layout, Row, Col, Menu
 } from 'antd';
+import {MenuUnfoldOutlined, MenuFoldOutlined} from '@ant-design/icons';
 import Sticky from 'react-stickynode';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faInstagram, faLinkedin } from '@fortawesome/free-brands-svg-icons';
@@ -22,12 +23,12 @@ const { SubMenu, ItemGroup } = Menu;
 const Header = () => {
   const { t } = useTranslation([i18nCommonPrefix, i18nPrefix]);
   const [isMobileMenuOpened, setMobileMenuOpened] = useState(false);
-    const destinations = getDestinations();
-    if(Array.isArray(destinations)) {
-      let groupedDestinations = groupBy(destinations, 'continent');
-
+  const destinations = getDestinations();
+  if(destinations) {
+    const groupedDestinations = groupBy(destinations, 'continent');
 
     return (
+    <>
       <Sticky enabled className="header">
         <AntHeader>
           <Container>
@@ -37,7 +38,7 @@ const Header = () => {
                 <Link href='/'>
                   <a>
                     <img
-                      src="/static/images/logo/logo_3.png"
+                      src="images/logo/logo_3.png"
                       width="45px"
                       height="45px"
                       alt="Traveling Maude Logo"
@@ -109,11 +110,7 @@ const Header = () => {
                   onKeyPress={() => {}}
                 >
                   {t(`${i18nPrefix}:menu.label`)}
-                  <Icon
-                    type={`menu-${isMobileMenuOpened ? 'un' : ''}fold`}
-                    theme="outlined"
-                    style={{ marginLeft: 10 }}
-                  />
+                  {isMobileMenuOpened ? <MenuUnfoldOutlined style={{ marginLeft: 10 }} /> : <MenuFoldOutlined style={{ marginLeft: 10 }} />}
                 </div>
                 <Link href='/'>
                   <a style={{ marginLeft: -70 }}>
@@ -130,9 +127,10 @@ const Header = () => {
           </Container>
         </AntHeader>
       </Sticky>
+    </>
     );
   }
   return  <></>;
-  }
+}
 
 export default Header;

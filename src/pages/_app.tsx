@@ -29,11 +29,9 @@ const App = ({ Component, pageProps, router }: AppProps) => {
   }, []);
 
   return (
-    <>
-      <Layout>
-        <Component {...pageProps} />
-      </Layout>
-    </>
+    <Layout>
+      <Component {...pageProps} />
+    </Layout>
   );
 };
 

@@ -1,11 +1,13 @@
-const destinations = require('./destinations');
-const articles = require('./articles');
-const galleryImages = require('./galleryImages');
-const themes = require('./themes');
+import destinations from './destinations'
+import articles from './articles'
+import galleryImages from './galleryImages'
+import themes from './themes'
 
-export default {
+const models = {
   Destinations: destinations,
   Articles: articles,
   GalleryImages: galleryImages,
   Themes: themes,
 };
+
+export default models;

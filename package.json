@@ -19,6 +19,7 @@
     "url": "https://github.com/FelixLeChat/TravelBlog/issues"
   },
   "dependencies": {
+    "@ant-design/icons": "^4.8.0",
     "@coreui/coreui": "^4.2.2",
     "@coreui/react": "^4.4.0",
     "@fortawesome/fontawesome-svg-core": "^1.2.8",

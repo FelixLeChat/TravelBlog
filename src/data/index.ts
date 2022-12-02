@@ -44,9 +44,7 @@ export const getArticle = (articleSlug: string) => {
 export const getHomeDetails = () => {
   const articles = models.Articles;
   if (articles.length > 0) {
-    return {
-      articles,
-    };
+    return articles;
   }
   return null;
 }
@@ -54,9 +52,7 @@ export const getHomeDetails = () => {
 export const getThemes = () => {
   const themes = models.Themes;
   if (themes.length > 0) {
-    return {
-      themes,
-    };
+    return themes;
   }
   return null;
 }
@@ -64,9 +60,7 @@ export const getThemes = () => {
 export const getDestinations = () => {
   const destinations = models.Destinations;
   if (destinations.length > 0) {
-    return {
-      destinations,
-    };
+    return destinations;
   } 
   return null;
 }
@@ -74,9 +68,7 @@ export const getDestinations = () => {
 export const getGallery = () => {
   const images = models.GalleryImages;
   if (images.length > 0) {
-    return {
-      imageGallery: getRandoms(images, 7)
-    };
+    return getRandoms(images, 7);
   } 
   return null
 }
